@@ -1,4 +1,4 @@
-module BayesBandit.Bernoulli exposing (Bernoulli, choose, winnerProbabilities)
+module BayesBandit.Bernoulli exposing (Error, bernoulli, choose, winnerProbabilities)
 
 import Dict exposing (Dict)
 import Distribution.Beta
@@ -29,21 +29,26 @@ type Error
     | NoVariants
 
 
+bernoulli : Int -> Int -> Result Error Bernoulli
+bernoulli successes failures =
+    if successes < 0 || failures < 0 then
+        Err InvalidBernoulli
+
+    else
+        Ok (Bernoulli successes failures)
+
+
 {-| Given a Dict of variant names and their Bernoulli distributions, return the probabilities that each variant
 is the best by Thompson sampling of the conjugate posterior Beta distribution.
 -}
 winnerProbabilities : Dict VariantName Bernoulli -> State Seed (Result Error (Dict VariantName Float))
 winnerProbabilities variants =
-    if List.any invalidBernoulli (variants |> Dict.toList |> List.map second) then
-        state (Err InvalidBernoulli)
-
-    else
-        let
-            numSamples =
-                300000
-        in
-        thompsonSample variants numSamples
-            |> State.map (Result.map (Dict.map (\_ timesBest -> (toFloat <| timesBest) / numSamples)))
+    let
+        numSamples =
+            300000
+    in
+    thompsonSample variants numSamples
+        |> State.map (Result.map (Dict.map (\_ timesBest -> (toFloat <| timesBest) / numSamples)))
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, choose a winning variant by sampling
@@ -69,32 +74,33 @@ choose variants =
         |> State.map (Result.andThen <| bestVariant)
 
 
-{-| Returns true if the Bernoulli is invalid due to having successes or failures less than 0, else return false.
--}
-invalidBernoulli : Bernoulli -> Bool
-invalidBernoulli b =
-    b.successes < 0 || b.failures < 0
-
-
 {-| Sample from the conjugate posterior Beta distribution for the given Bernoulli distribution,
 assuming a uniform prior (1,1)
 -}
 betaSample : Bernoulli -> State Seed (Result Error Float)
-betaSample bernoulli =
-    if bernoulli.successes < 0 || bernoulli.failures < 0 then
-        state (Err InvalidBernoulli)
+betaSample brn =
+    let
+        betaResult =
+            Distribution.Beta.beta (toFloat brn.successes + 1) (toFloat brn.failures + 1)
 
-    else
-        Distribution.Beta.sample (toFloat bernoulli.successes + 1) (toFloat bernoulli.failures + 1)
-            |> State.map (Result.mapError BetaSamplingError)
+        sampleBeta =
+            case betaResult of
+                Ok beta ->
+                    Distribution.Beta.sample beta
+
+                Err e ->
+                    state (Err e)
+    in
+    sampleBeta
+        |> State.map (Result.mapError BetaSamplingError)
 
 
 {-| Given a variant name and Bernoulli distribution, return a sample from the conjugate posterior
 Beta distribution along with the variant name
 -}
 betaSampleVariant : VariantName -> Bernoulli -> State Seed (Result Error ( VariantName, Float ))
-betaSampleVariant variant bernoulli =
-    betaSample bernoulli |> State.map (Result.map (\b -> ( variant, b )))
+betaSampleVariant variant brn =
+    betaSample brn |> State.map (Result.map (\b -> ( variant, b )))
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, run `numSamples` trials
@@ -140,7 +146,7 @@ thompsonSample variants numSamples =
 
         -- Create a Dict with 0 as the "number of times best" value for every variant
         initialTimesBest =
-            Dict.map (\_ bernoulli -> ( bernoulli, 0 )) variants
+            Dict.map (\_ brn -> ( brn, 0 )) variants
     in
     tailRecM go ( Ok initialTimesBest, numSamples )
         -- strip out Bernoullis to return just times best

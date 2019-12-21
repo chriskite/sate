@@ -1,6 +1,6 @@
-module Distribution.Beta exposing (Error, sample)
+module Distribution.Beta exposing (Error, beta, sample)
 
-import Distribution.Gamma
+import Distribution.Gamma exposing (gamma)
 import Random exposing (Seed)
 import Result
 import State exposing (State, state)
@@ -13,15 +13,41 @@ type Error
     | NotImplemented
 
 
-sample : Float -> Float -> State Seed (Result Error Float)
-sample a b =
+type alias Beta =
+    { a : Float, b : Float }
+
+
+beta : Float -> Float -> Result Error Beta
+beta a b =
     if a <= 0.0 then
-        state (Err (InvalidA a))
+        Err (InvalidA a)
 
     else if b <= 0.0 then
-        state (Err (InvalidB b))
+        Err (InvalidB b)
 
-    else if a <= 0.5 && b <= 0.5 then
+    else
+        Ok (Beta a b)
+
+
+sample : Beta -> State Seed (Result Error Float)
+sample bta =
+    let
+        a =
+            bta.a
+
+        b =
+            bta.b
+
+        sampleParamGamma : Float -> State Seed (Result Distribution.Gamma.Error Float)
+        sampleParamGamma x =
+            case gamma x 1.0 of
+                Ok xg ->
+                    Distribution.Gamma.sample xg
+
+                Err e ->
+                    state (Err e)
+    in
+    if a <= 0.5 && b <= 0.5 then
         state (Err NotImplemented)
 
     else if a <= 1.0 && b <= 1.0 then
@@ -36,5 +62,5 @@ sample a b =
                     bGammaResult
                     |> Result.mapError GammaDeviateError
             )
-            (Distribution.Gamma.sample a 1.0)
-            (Distribution.Gamma.sample b 1.0)
+            (sampleParamGamma a)
+            (sampleParamGamma b)

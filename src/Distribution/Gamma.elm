@@ -1,4 +1,4 @@
-module Distribution.Gamma exposing (Error, gammaDeviateRec, gaussianXV, sample)
+module Distribution.Gamma exposing (Error, gamma, sample)
 
 import Rand
 import Random exposing (Seed)
@@ -19,15 +19,32 @@ type alias Scale =
     Float
 
 
-sample : Shape -> Scale -> State Seed (Result Error Float)
-sample shape scale =
+type alias Gamma =
+    { shape : Shape, scale : Scale }
+
+
+gamma : Shape -> Scale -> Result Error Gamma
+gamma shape scale =
     if shape <= 0.0 then
-        state (Err (InvalidShape shape))
+        Err (InvalidShape shape)
 
     else if scale <= 0.0 then
-        state (Err (InvalidScale scale))
+        Err (InvalidScale scale)
 
-    else if shape == 1.0 then
+    else
+        Ok (Gamma shape scale)
+
+
+sample : Gamma -> State Seed (Result Error Float)
+sample gma =
+    let
+        shape =
+            gma.shape
+
+        scale =
+            gma.scale
+    in
+    if shape == 1.0 then
         State.map (\r -> Ok (scale * -1.0 * logBase 10 r)) Rand.drawUniform
 
     else if shape < 1.0 then

@@ -1,11 +1,13 @@
 {
     "type": "package",
-    "name": "chriskite/safe",
-    "summary": "Statistical Analysis for Elm",
+    "name": "chriskite/sate",
+    "summary": "Statistical Analysis and Tests for Elm",
     "license": "MIT",
     "version": "0.0.0",
     "exposed-modules": [
-        "Distribution.Beta"
+        "Distribution.Beta",
+        "Distribution.Gamma",
+        "BayesBandit.Bernoulli"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
     "dependencies": {

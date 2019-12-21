@@ -7,9 +7,14 @@ Statistical Analysis and Tests for Elm
 import Random
 import Dict
 import State
-import BayesBandit.Bernoulli exposing (Bernoulli, winnerProbabilities)
+import BayesBandit.Bernoulli exposing (bernoulli, winnerProbabilities)
 
-variants = Dict.fromList [ ("A", Bernoulli 1 10), ("B", Bernoulli 10 100), ("C", Bernoulli 11 99) ]
+variants = 
+    Result.map3
+        (\a b c -> Dict.fromList [ ("A", a), ("B", b), ("C", c) ])
+        (bernoulli 1 10)
+        (bernoulli 10 100)
+        (bernoulli 11 99)
 
 State.run (Random.initialSeed 42) (BayesBandit.Bernoulli.winnerProbabilities variants)
 
