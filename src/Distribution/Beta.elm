@@ -1,6 +1,7 @@
-module Distribution.Beta exposing (Error, beta, sample)
+module Distribution.Beta exposing (Error, beta, pdf, sample)
 
 import Distribution.Gamma exposing (gamma)
+import Math exposing (..)
 import Random exposing (Seed)
 import Result
 import State exposing (State, state)
@@ -27,6 +28,18 @@ beta a b =
 
     else
         Ok (Beta a b)
+
+
+pdf : Beta -> Float -> Float
+pdf bta x =
+    if x > 1 || x < 0 then
+        0
+
+    else if 1 == bta.a && 1 == bta.b then
+        1
+
+    else
+        exp ((bta.a - 1) * ln x + (bta.b - 1) * ln (1 - x) - betaLn bta.a bta.b)
 
 
 sample : Beta -> State Seed (Result Error Float)
