@@ -1,4 +1,4 @@
-module Distribution.Gamma exposing (Error, gamma, sample)
+module Distribution.Gamma exposing (GammaDist, gammaDist, sample, scale, shape)
 
 import Rand
 import Random exposing (Seed)
@@ -6,93 +6,87 @@ import State exposing (State, andThen, state)
 import Tuple exposing (first, second)
 
 
-type Error
-    = InvalidShape Float
-    | InvalidScale Float
+type GammaDist
+    = GammaDist Float Float
 
 
-type alias Shape =
-    Float
-
-
-type alias Scale =
-    Float
-
-
-type alias Gamma =
-    { shape : Shape, scale : Scale }
-
-
-gamma : Shape -> Scale -> Result Error Gamma
-gamma shape scale =
-    if shape <= 0.0 then
-        Err (InvalidShape shape)
-
-    else if scale <= 0.0 then
-        Err (InvalidScale scale)
+gammaDist : Float -> Float -> Maybe GammaDist
+gammaDist shape_ scale_ =
+    if shape_ <= 0.0 || scale_ <= 0.0 then
+        Nothing
 
     else
-        Ok (Gamma shape scale)
+        Just (GammaDist shape_ scale_)
 
 
-sample : Gamma -> State Seed (Result Error Float)
-sample gma =
+shape : GammaDist -> Float
+shape (GammaDist sh _) =
+    sh
+
+
+scale : GammaDist -> Float
+scale (GammaDist _ sc) =
+    sc
+
+
+sample : GammaDist -> State Seed Float
+sample dist =
     let
-        shape =
-            gma.shape
+        distShape =
+            shape dist
 
-        scale =
-            gma.scale
+        distScale =
+            scale dist
     in
-    if shape == 1.0 then
-        State.map (\r -> Ok (scale * -1.0 * logBase 10 r)) Rand.drawUniform
+    if distShape == 1.0 then
+        State.map (\r -> distScale * -1.0 * logBase 10 r) Rand.drawUniform
 
-    else if shape < 1.0 then
-        State.map (\r -> Ok (scale * r)) (sampleHelper shape)
+    else if distShape < 1.0 then
+        State.map (\r -> distScale * r) (sampleHelper distShape)
 
     else
         let
             d =
-                shape - 1.0 / 3.0
+                distShape - 1.0 / 3.0
 
             c =
                 1.0 / sqrt (9.0 * d)
         in
-        State.map (\r -> Ok (scale * r)) (gammaDeviateRec d c)
+        State.map (\r -> distScale * r) (gammaDeviateRec d c)
 
 
-sampleHelper : Shape -> State Seed Float
-sampleHelper shape =
+sampleHelper : Float -> State Seed Float
+sampleHelper s =
     let
         calcResult uv =
             let
                 ( u, v ) =
                     uv
             in
-            if u <= 1.0 - shape then
+            if u <= 1.0 - s then
                 let
                     x =
-                        u ^ (1.0 / shape)
+                        u ^ (1.0 / s)
                 in
                 if x <= v then
                     state x
 
                 else
-                    sampleHelper shape
+                    sampleHelper s
 
             else
                 let
                     y =
-                        -1.0 * logBase 10 ((1 - u) / shape)
+                        -1.0 * logBase 10 ((1 - u) / s)
 
                     x =
-                        (1.0 - shape + shape * y) ^ (1.0 / shape)
+                        (1.0 - s + s * y) ^ (1.0 / s)
                 in
                 if x <= v + y then
                     state x
 
                 else
-                    sampleHelper shape
+                    sampleHelper s
 
         drawUV =
             State.map2 (\uR vR -> ( uR, -1.0 * logBase 10 vR )) Rand.drawUniform Rand.drawUniform

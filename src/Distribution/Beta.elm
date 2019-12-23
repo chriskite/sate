@@ -1,79 +1,81 @@
-module Distribution.Beta exposing (Error, beta, pdf, sample)
+module Distribution.Beta exposing (BetaDist, alpha, beta, betaDist, pdf, sample)
 
-import Distribution.Gamma exposing (gamma)
+import Distribution.Gamma exposing (GammaDist, gammaDist)
 import Math exposing (..)
 import Random exposing (Seed)
-import Result
 import State exposing (State, state)
 
 
-type Error
-    = InvalidA Float
-    | InvalidB Float
-    | GammaDeviateError Distribution.Gamma.Error
-    | NotImplemented
+type BetaDist
+    = BetaDist Float Float
 
 
-type alias Beta =
-    { a : Float, b : Float }
-
-
-beta : Float -> Float -> Result Error Beta
-beta a b =
-    if a <= 0.0 then
-        Err (InvalidA a)
-
-    else if b <= 0.0 then
-        Err (InvalidB b)
+betaDist : Float -> Float -> Maybe BetaDist
+betaDist a b =
+    if a <= 0.0 || b <= 0.0 then
+        Nothing
 
     else
-        Ok (Beta a b)
+        Just (BetaDist a b)
 
 
-pdf : Beta -> Float -> Float
-pdf bta x =
+alpha : BetaDist -> Float
+alpha (BetaDist a _) =
+    a
+
+
+beta : BetaDist -> Float
+beta (BetaDist _ b) =
+    b
+
+
+pdf : BetaDist -> Float -> Float
+pdf dist x =
+    let
+        a =
+            alpha dist
+
+        b =
+            beta dist
+    in
     if x > 1 || x < 0 then
         0
 
-    else if 1 == bta.a && 1 == bta.b then
+    else if 1 == a && 1 == b then
         1
 
     else
-        exp ((bta.a - 1) * ln x + (bta.b - 1) * ln (1 - x) - betaLn bta.a bta.b)
+        exp ((a - 1) * ln x + (b - 1) * ln (1 - x) - betaLn a b)
 
 
-sample : Beta -> State Seed (Result Error Float)
-sample bta =
+sample : BetaDist -> State Seed Float
+sample dist =
     let
         a =
-            bta.a
+            alpha dist
 
         b =
-            bta.b
+            beta dist
 
-        sampleParamGamma : Float -> State Seed (Result Distribution.Gamma.Error Float)
+        {- Samples the Gamma distribution with shape x
+           Ignores the Nothing case of gammaDist, as we will check that x is a valid shape.
+        -}
+        sampleParamGamma : Float -> State Seed Float
         sampleParamGamma x =
-            case gamma x 1.0 of
-                Ok xg ->
-                    Distribution.Gamma.sample xg
-
-                Err e ->
-                    state (Err e)
+            Maybe.map Distribution.Gamma.sample (gammaDist x 1.0) |> Maybe.withDefault (state 0)
     in
     if a <= 0.5 && b <= 0.5 then
-        state (Err NotImplemented)
+        -- TODO
+        state 0
 
     else if a <= 1.0 && b <= 1.0 then
-        state (Err NotImplemented)
+        -- TODO
+        state 0
 
     else
         State.map2
-            (\aGammaResult bGammaResult ->
-                Result.map2
-                    (\aGamma bGamma -> aGamma / (aGamma + bGamma))
-                    aGammaResult
-                    bGammaResult
-                    |> Result.mapError GammaDeviateError
+            (\aGamma bGamma ->
+                aGamma / (aGamma + bGamma)
             )
             (sampleParamGamma a)
             (sampleParamGamma b)
