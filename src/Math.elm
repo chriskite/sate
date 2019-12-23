@@ -1,5 +1,6 @@
 module Math exposing (..)
 
+import Float.Extra as Float
 import List exposing (map, range, sum)
 import List.Extra exposing (zip)
 import Tuple exposing (first, second)
@@ -25,7 +26,7 @@ gammaLn xx =
             (xx + 5.5) - (xx + 0.5) * ln (xx + 5.5)
 
         divisors =
-            range 1 7 |> map (\y -> xx + toFloat y)
+            Float.range { start = xx + 1, end = xx + 7, steps = 6 }
 
         ser =
             1.000000000190015 + sum (zip cof divisors |> map (\p -> first p / second p))
