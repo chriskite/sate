@@ -9,10 +9,6 @@ import State exposing (State, Step(..), state, tailRecM)
 import Tuple exposing (first, second)
 
 
-type alias VariantsTimesBest =
-    Dict String Int
-
-
 {-| Given a Dict of variant names and their Bernoulli distributions, return the probabilities that each variant
 is the best by Thompson sampling of the conjugate posterior Beta distribution.
 -}
@@ -77,7 +73,7 @@ See the following for more information:
 <http://proceedings.mlr.press/v23/agrawal12/agrawal12.pdf>
 
 -}
-thompsonSample : Dict String Bernoulli -> Int -> State Seed VariantsTimesBest
+thompsonSample : Dict String Bernoulli -> Int -> State Seed (Dict String Int)
 thompsonSample variants numSamples =
     let
         {- Sample from the Beta conjugate posterior of all variants, and increment the "times best" count
