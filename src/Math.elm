@@ -16,6 +16,9 @@ ln x =
     logBase Basics.e x
 
 
+{-| Lanczos approximation of the ln gamma function
+<https://en.wikipedia.org/wiki/Lanczos_approximation>
+-}
 gammaLn : Float -> Float
 gammaLn xx =
     let
