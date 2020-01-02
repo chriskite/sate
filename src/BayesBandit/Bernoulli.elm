@@ -79,7 +79,7 @@ choose variants =
         variantSamples =
             variants
                 |> Dict.toList
-                |> List.map (\vb -> betaSampleVariant (first vb) (second vb))
+                |> List.map (\( variant, bernoulli ) -> betaSampleVariant variant bernoulli)
                 |> State.combine
 
         bestVariant : List ( a, comparable ) -> Maybe a
@@ -135,10 +135,10 @@ thompsonSample variants numSamples =
                 let
                     maybeBestVariant : State Seed (Maybe String)
                     maybeBestVariant =
-                        choose (Dict.map (\_ x -> first x) vs)
+                        choose (Dict.map (\_ ( bernoulli, _ ) -> bernoulli) vs)
 
                     incrTimesBest =
-                        Maybe.map (\x -> ( first x, second x + 1 ))
+                        Maybe.map (\( bernoulli, timesBest ) -> ( bernoulli, timesBest + 1 ))
 
                     updateTimesBest variant =
                         Dict.update variant incrTimesBest vs
@@ -160,4 +160,4 @@ thompsonSample variants numSamples =
     in
     tailRecM go ( initialTimesBest, numSamples )
         -- strip out Bernoullis to return just times best
-        |> State.map (Dict.map (\_ v -> second v))
+        |> State.map (Dict.map (\_ ( _, timesBest ) -> timesBest))
