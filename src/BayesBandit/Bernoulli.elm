@@ -66,7 +66,7 @@ pdfsVis variants =
                 << position Y [ pName "y", pMType Quantitative ]
                 << color [ mName "name", mMType Nominal ]
     in
-    toVegaLite [ title "Beta PDFs", data [], enc [], line [ maInterpolate miMonotone ] ]
+    toVegaLite [ title "Beta PDFs" [], widthOfContainer, heightOfContainer, data [], enc [], line [ maInterpolate miMonotone ] ]
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, choose a winning variant by sampling

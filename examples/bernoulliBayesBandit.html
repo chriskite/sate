@@ -13,11 +13,12 @@
 </head>
 
 <body>
-<div id="vis"></div>
+<div id="winners"></div>
+<div id="uncertainty" style="width: 1024px; height: 800px"></div>
 
 <script>
     Elm.BernoulliBayesBandit.init().ports.elmToJS.subscribe(function(specs) {
-        vegaEmbed("#vis", specs, { actions: false }).catch(console.warn);
+        vegaEmbed("#uncertainty", specs, { actions: false }).catch(console.warn);
     });
 </script>
 </body>
