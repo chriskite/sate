@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example Bernoulli Bayes Bandit</title>
+    <meta charset="utf-8" />
+
+    <!-- Vega-Lite runtime -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+    <script src="js/bernoulliBayesBandit.js"></script>
+</head>
+
+<body>
+<div id="vis"></div>
+
+<script>
+    Elm.BernoulliBayesBandit.init().ports.elmToJS.subscribe(function(specs) {
+        vegaEmbed("#vis", specs, { actions: false }).catch(console.warn);
+    });
+</script>
+</body>
+</html>

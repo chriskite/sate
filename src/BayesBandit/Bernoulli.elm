@@ -1,38 +1,85 @@
-module BayesBandit.Bernoulli exposing (choose, winnerProbabilities)
+module BayesBandit.Bernoulli exposing (choose, pdfsVis, winnerProbabilities)
 
 import Dict exposing (Dict)
-import Distribution.Bernoulli exposing (Bernoulli, failures, successes)
-import Distribution.Beta
+import Distribution.Bernoulli exposing (BernoulliDist, failures, successes)
+import Distribution.Beta exposing (BetaDist)
+import Float.Extra as Float
 import List.Extra exposing (maximumBy)
 import Random exposing (Seed)
 import State exposing (State, Step(..), state, tailRecM)
 import Tuple exposing (first, second)
+import VegaLite exposing (..)
+
+
+type alias LabelledPoint =
+    { label : String, x : Float, y : Float }
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, return the probabilities that each variant
 is the best by Thompson sampling of the conjugate posterior Beta distribution.
 -}
-winnerProbabilities : Dict String Bernoulli -> State Seed (Dict String Float)
+winnerProbabilities : Dict String BernoulliDist -> State Seed (Dict String Float)
 winnerProbabilities variants =
     let
         numSamples =
             300000
     in
     thompsonSample variants numSamples
-        |> State.map (Dict.map (\_ timesBest -> (toFloat <| timesBest) / numSamples))
+        |> State.map (Dict.map (\_ timesBest -> toFloat timesBest / numSamples))
+
+
+{-| Create a VegaLite visualization Spec for the PDFs of the Beta posteriors of each variant
+-}
+pdfsVis : Dict String BernoulliDist -> Spec
+pdfsVis variants =
+    let
+        xs =
+            Float.range { start = 0, end = 1, steps = 100 }
+
+        posteriors : Dict String BetaDist
+        posteriors =
+            Dict.map
+                (\_ v -> Distribution.Bernoulli.posterior Distribution.Beta.uniform v)
+                variants
+
+        pdfPoints : List LabelledPoint
+        pdfPoints =
+            posteriors
+                |> Dict.map
+                    (\name posterior ->
+                        -- for each variant, calculate the pdf of the posterior for all x
+                        List.map (\x -> LabelledPoint name x (Distribution.Beta.pdf posterior x)) xs
+                    )
+                -- convert to flattened List and throw away extraneous variant name from Dict
+                |> Dict.toList
+                |> List.concatMap second
+
+        dataValueLists =
+            List.map (\lp -> [ ( "x", num lp.x ), ( "y", num lp.y ), ( "name", str lp.label ) ]) pdfPoints
+
+        data =
+            List.foldl (\dvl acc -> acc << dataRow dvl) (dataFromRows []) dataValueLists
+
+        enc =
+            encoding
+                << position X [ pName "x", pMType Quantitative ]
+                << position Y [ pName "y", pMType Quantitative ]
+                << color [ mName "name", mMType Nominal ]
+    in
+    toVegaLite [ title "Beta PDFs", data [], enc [], line [ maInterpolate miMonotone ] ]
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, choose a winning variant by sampling
 the conjugate posterior Beta distributions and choosing the variant with the highest sampled probability.
 -}
-choose : Dict String Bernoulli -> State Seed (Maybe String)
+choose : Dict String BernoulliDist -> State Seed (Maybe String)
 choose variants =
     let
         variantSamples : State Seed (List ( String, Float ))
         variantSamples =
             variants
                 |> Dict.toList
-                |> List.map (\vb -> betaSampleVariant (first vb) (second vb))
+                |> List.map (\( variant, bernoulli ) -> betaSampleVariant variant bernoulli)
                 |> State.combine
 
         bestVariant : List ( a, comparable ) -> Maybe a
@@ -46,7 +93,7 @@ choose variants =
 {-| Sample from the conjugate posterior Beta distribution for the given Bernoulli distribution,
 assuming a uniform prior (1,1)
 -}
-betaSample : Bernoulli -> State Seed Float
+betaSample : BernoulliDist -> State Seed Float
 betaSample bernoulli =
     let
         betaResult =
@@ -58,7 +105,7 @@ betaSample bernoulli =
 {-| Given a variant name and Bernoulli distribution, return a sample from the conjugate posterior
 Beta distribution along with the variant name
 -}
-betaSampleVariant : String -> Bernoulli -> State Seed ( String, Float )
+betaSampleVariant : String -> BernoulliDist -> State Seed ( String, Float )
 betaSampleVariant variant bernoulli =
     betaSample bernoulli |> State.map (\b -> ( variant, b ))
 
@@ -73,7 +120,7 @@ See the following for more information:
 <http://proceedings.mlr.press/v23/agrawal12/agrawal12.pdf>
 
 -}
-thompsonSample : Dict String Bernoulli -> Int -> State Seed (Dict String Int)
+thompsonSample : Dict String BernoulliDist -> Int -> State Seed (Dict String Int)
 thompsonSample variants numSamples =
     let
         {- Sample from the Beta conjugate posterior of all variants, and increment the "times best" count
@@ -88,10 +135,10 @@ thompsonSample variants numSamples =
                 let
                     maybeBestVariant : State Seed (Maybe String)
                     maybeBestVariant =
-                        choose (Dict.map (\_ x -> first x) vs)
+                        choose (Dict.map (\_ ( bernoulli, _ ) -> bernoulli) vs)
 
                     incrTimesBest =
-                        Maybe.map (\x -> ( first x, second x + 1 ))
+                        Maybe.map (\( bernoulli, timesBest ) -> ( bernoulli, timesBest + 1 ))
 
                     updateTimesBest variant =
                         Dict.update variant incrTimesBest vs
@@ -113,4 +160,4 @@ thompsonSample variants numSamples =
     in
     tailRecM go ( initialTimesBest, numSamples )
         -- strip out Bernoullis to return just times best
-        |> State.map (Dict.map (\_ v -> second v))
+        |> State.map (Dict.map (\_ ( _, timesBest ) -> timesBest))

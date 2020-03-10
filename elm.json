@@ -2,10 +2,11 @@
     "type": "package",
     "name": "chriskite/sate",
     "summary": "Statistical Analysis and Tests for Elm",
-    "license": "MIT",
+    "license": "BSD-3-Clause",
     "version": "0.0.0",
     "exposed-modules": [
         "Distribution.Beta",
+        "Distribution.Bernoulli",
         "Distribution.Gamma",
         "BayesBandit.Bernoulli"
     ],
@@ -15,7 +16,6 @@
         "elm/random": "1.0.0 <= v < 2.0.0",
         "elm-community/list-extra": "8.2.2 <= v < 9.0.0",
         "elm-community/random-extra": "3.1.0 <= v < 4.0.0",
-        "elm-community/result-extra": "2.3.0 <= v < 3.0.0",
         "folkertdev/elm-state": "3.0.1 <= v < 4.0.0",
         "gicentre/elm-vegalite": "1.12.0 <= v < 2.0.0",
         "ianmackenzie/elm-float-extra": "1.1.0 <= v < 2.0.0"

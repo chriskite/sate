@@ -1,4 +1,4 @@
-module Distribution.Beta exposing (BetaDist, alpha, beta, betaDist, pdf, sample)
+module Distribution.Beta exposing (BetaDist, alpha, beta, betaDist, pdf, sample, uniform)
 
 import Distribution.Gamma exposing (GammaDist, gammaDist)
 import Math exposing (..)
@@ -17,6 +17,11 @@ betaDist a b =
 
     else
         Just (BetaDist a b)
+
+
+uniform : BetaDist
+uniform =
+    BetaDist 1 1
 
 
 alpha : BetaDist -> Float
