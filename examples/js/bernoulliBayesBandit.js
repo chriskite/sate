@@ -600,11 +600,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.aA.z === region.aq.z)
+	if (region.aF.z === region.av.z)
 	{
-		return 'on line ' + region.aA.z;
+		return 'on line ' + region.aF.z;
 	}
-	return 'on lines ' + region.aA.z + ' through ' + region.aq.z;
+	return 'on lines ' + region.aF.z + ' through ' + region.av.z;
 }
 
 
@@ -1644,6 +1644,43 @@ var _Json_encodeNull = _Json_wrap(null);
 
 
 
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
 // TASKS
 
 function _Scheduler_succeed(value)
@@ -1857,9 +1894,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.au,
-		impl.aE,
-		impl.aC,
+		impl.az,
+		impl.aJ,
+		impl.aH,
 		function() { return function() {} }
 	);
 });
@@ -2440,10 +2477,6 @@ var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
 	});
-var $elm$core$Basics$identity = function (x) {
-	return x;
-};
-var $author$project$BernoulliBayesBandit$elmToJS = _Platform_outgoingPort('elmToJS', $elm$core$Basics$identity);
 var $elm$core$Result$Err = function (a) {
 	return {$: 1, a: a};
 };
@@ -2839,11 +2872,12 @@ var $elm$core$Result$isOk = function (result) {
 		return false;
 	}
 };
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $elm$json$Json$Decode$succeed = _Json_succeed;
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $author$project$BernoulliBayesBandit$JSMsg = F2(
+	function (uncertainty, winners) {
+		return {ai: uncertainty, am: winners};
+	});
 var $author$project$Distribution$Bernoulli$BernoulliDist = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
@@ -2852,6 +2886,36 @@ var $author$project$Distribution$Bernoulli$bernoulli = F2(
 	function (numSuccesses, numFailures) {
 		return ((numSuccesses < 0) || (numFailures < 0)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 			A2($author$project$Distribution$Bernoulli$BernoulliDist, numSuccesses, numFailures));
+	});
+var $elm$core$Basics$identity = function (x) {
+	return x;
+};
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var $author$project$BernoulliBayesBandit$elmToJS = _Platform_outgoingPort(
+	'elmToJS',
+	function ($) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'uncertainty',
+					$elm$core$Basics$identity($.ai)),
+					_Utils_Tuple2(
+					'winners',
+					$elm$core$Basics$identity($.am))
+				]));
 	});
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -2976,34 +3040,6 @@ var $elm$core$Dict$fromList = function (assocs) {
 		$elm$core$Dict$empty,
 		assocs);
 };
-var $elm$core$Maybe$map3 = F4(
-	function (func, ma, mb, mc) {
-		if (ma.$ === 1) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			var a = ma.a;
-			if (mb.$ === 1) {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var b = mb.a;
-				if (mc.$ === 1) {
-					return $elm$core$Maybe$Nothing;
-				} else {
-					var c = mc.a;
-					return $elm$core$Maybe$Just(
-						A3(func, a, b, c));
-				}
-			}
-		}
-	});
-var $author$project$BayesBandit$Bernoulli$LabelledPoint = F3(
-	function (label, x, y) {
-		return {R: label, ai: x, aj: y};
-	});
-var $gicentre$elm_vegalite$VegaLite$Nominal = 0;
-var $gicentre$elm_vegalite$VegaLite$Quantitative = 2;
-var $gicentre$elm_vegalite$VegaLite$X = 0;
-var $gicentre$elm_vegalite$VegaLite$Y = 1;
 var $elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -3059,17 +3095,6 @@ var $elm$core$List$foldr = F3(
 	function (fn, acc, ls) {
 		return A4($elm$core$List$foldrHelper, fn, acc, 0, ls);
 	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
 var $elm$core$List$map = F2(
 	function (f, xs) {
 		return A3(
@@ -3084,6 +3109,25 @@ var $elm$core$List$map = F2(
 			_List_Nil,
 			xs);
 	});
+var $author$project$BayesBandit$Bernoulli$LabelledPoint = F3(
+	function (label, x, y) {
+		return {U: label, an: x, ao: y};
+	});
+var $gicentre$elm_vegalite$VegaLite$Nominal = 0;
+var $gicentre$elm_vegalite$VegaLite$Quantitative = 2;
+var $gicentre$elm_vegalite$VegaLite$X = 0;
+var $gicentre$elm_vegalite$VegaLite$Y = 1;
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
 var $elm$core$List$concatMap = F2(
 	function (f, list) {
 		return $elm$core$List$concat(
@@ -3111,19 +3155,6 @@ var $elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(0),
 				entries));
 	});
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
-};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $gicentre$elm_vegalite$VegaLite$binProperty = function (binProp) {
 	switch (binProp.$) {
@@ -5825,6 +5856,10 @@ var $gicentre$elm_vegalite$VegaLite$MName = function (a) {
 	return {$: 0, a: a};
 };
 var $gicentre$elm_vegalite$VegaLite$mName = $gicentre$elm_vegalite$VegaLite$MName;
+var $gicentre$elm_vegalite$VegaLite$MScale = function (a) {
+	return {$: 3, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$mScale = $gicentre$elm_vegalite$VegaLite$MScale;
 var $gicentre$elm_vegalite$VegaLite$MInterpolate = function (a) {
 	return {$: 34, a: a};
 };
@@ -5905,9 +5940,9 @@ var $ianmackenzie$elm_float_extra$Float$Extra$rangeHelp = F5(
 		}
 	});
 var $ianmackenzie$elm_float_extra$Float$Extra$range = function (_v0) {
-	var start = _v0.aA;
-	var end = _v0.aq;
-	var steps = _v0.aB;
+	var start = _v0.aF;
+	var end = _v0.av;
+	var steps = _v0.aG;
 	return (steps > 0) ? A5($ianmackenzie$elm_float_extra$Float$Extra$rangeHelp, start, end, steps, steps, _List_Nil) : _List_Nil;
 };
 var $elm$core$Tuple$second = function (_v0) {
@@ -5925,7 +5960,7 @@ var $elm_community$list_extra$List$Extra$zip = $elm$core$List$map2($elm$core$Tup
 var $author$project$Math$gammaLn = function (xx) {
 	var tmp = (xx + 5.5) - ((xx + 0.5) * $author$project$Math$ln(xx + 5.5));
 	var divisors = $ianmackenzie$elm_float_extra$Float$Extra$range(
-		{aq: xx + 7, aA: xx + 1, aB: 6});
+		{av: xx + 7, aF: xx + 1, aG: 6});
 	var cof = _List_fromArray(
 		[76.18009172947146, -86.50532032941678, 24.01409824083091, -1.231739572450155, 0.001208650973866179, -0.000005395239384953]);
 	var ser = 1.000000000190015 + $elm$core$List$sum(
@@ -6950,6 +6985,11 @@ var $author$project$Distribution$Bernoulli$posterior = F2(
 			$author$project$Distribution$Beta$beta(prior) + A2($elm$core$Basics$composeR, $author$project$Distribution$Bernoulli$failures, $elm$core$Basics$toFloat)(evidence));
 		return A2($elm$core$Maybe$withDefault, $author$project$Distribution$Beta$uniform, maybePosterior);
 	});
+var $gicentre$elm_vegalite$VegaLite$SScheme = F2(
+	function (a, b) {
+		return {$: 3, a: a, b: b};
+	});
+var $gicentre$elm_vegalite$VegaLite$scScheme = $gicentre$elm_vegalite$VegaLite$SScheme;
 var $gicentre$elm_vegalite$VegaLite$Str = function (a) {
 	return {$: 3, a: a};
 };
@@ -7189,7 +7229,7 @@ var $gicentre$elm_vegalite$VegaLite$widthOfContainer = _Utils_Tuple2(
 	$elm$json$Json$Encode$string('container'));
 var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 	var xs = $ianmackenzie$elm_float_extra$Float$Extra$range(
-		{aq: 1, aA: 0, aB: 100});
+		{av: 1, aF: 0, aG: 100});
 	var posteriors = A2(
 		$elm$core$Dict$map,
 		F2(
@@ -7243,8 +7283,13 @@ var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 		$gicentre$elm_vegalite$VegaLite$color(
 			_List_fromArray(
 				[
-					$gicentre$elm_vegalite$VegaLite$mName('name'),
-					$gicentre$elm_vegalite$VegaLite$mMType(0)
+					$gicentre$elm_vegalite$VegaLite$mName('Variant'),
+					$gicentre$elm_vegalite$VegaLite$mMType(0),
+					$gicentre$elm_vegalite$VegaLite$mScale(
+					_List_fromArray(
+						[
+							A2($gicentre$elm_vegalite$VegaLite$scScheme, 'set2', _List_Nil)
+						]))
 				])));
 	var dataValueLists = A2(
 		$elm$core$List$map,
@@ -7253,13 +7298,13 @@ var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 				[
 					_Utils_Tuple2(
 					'x',
-					$gicentre$elm_vegalite$VegaLite$num(lp.ai)),
+					$gicentre$elm_vegalite$VegaLite$num(lp.an)),
 					_Utils_Tuple2(
 					'y',
-					$gicentre$elm_vegalite$VegaLite$num(lp.aj)),
+					$gicentre$elm_vegalite$VegaLite$num(lp.ao)),
 					_Utils_Tuple2(
-					'name',
-					$gicentre$elm_vegalite$VegaLite$str(lp.R))
+					'Variant',
+					$gicentre$elm_vegalite$VegaLite$str(lp.U))
 				]);
 		},
 		pdfPoints);
@@ -7289,39 +7334,1222 @@ var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 					]))
 			]));
 };
-var $author$project$BernoulliBayesBandit$vis = function () {
-	var variants = A2(
+var $author$project$BernoulliBayesBandit$uncertaintyVis = function (variants) {
+	return $author$project$BayesBandit$Bernoulli$pdfsVis(variants);
+};
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $folkertdev$elm_state$State$run = F2(
+	function (initialState, _v0) {
+		var s = _v0;
+		return s(initialState);
+	});
+var $gicentre$elm_vegalite$VegaLite$Bar = 1;
+var $gicentre$elm_vegalite$VegaLite$bar = $gicentre$elm_vegalite$VegaLite$mark(1);
+var $gicentre$elm_vegalite$VegaLite$dataColumn = F2(
+	function (colName, data) {
+		switch (data.$) {
+			case 2:
+				var col = data.a;
+				return $elm$core$List$cons(
+					A2(
+						$elm$core$List$map,
+						function (x) {
+							return _Utils_Tuple2(
+								colName,
+								$elm$json$Json$Encode$float(x));
+						},
+						col));
+			case 3:
+				var col = data.a;
+				return $elm$core$List$cons(
+					A2(
+						$elm$core$List$map,
+						function (s) {
+							return _Utils_Tuple2(
+								colName,
+								$elm$json$Json$Encode$string(s));
+						},
+						col));
+			case 1:
+				var col = data.a;
+				return $elm$core$List$cons(
+					A2(
+						$elm$core$List$map,
+						function (ds) {
+							return _Utils_Tuple2(
+								colName,
+								$elm$json$Json$Encode$object(
+									A2($elm$core$List$map, $gicentre$elm_vegalite$VegaLite$dateTimeProperty, ds)));
+						},
+						col));
+			default:
+				var col = data.a;
+				return $elm$core$List$cons(
+					A2(
+						$elm$core$List$map,
+						function (b) {
+							return _Utils_Tuple2(
+								colName,
+								$elm$json$Json$Encode$bool(b));
+						},
+						col));
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var $gicentre$elm_vegalite$VegaLite$transpose = function (xss) {
+	var numCols = A2(
+		$elm$core$Basics$composeR,
+		$elm$core$List$head,
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$Maybe$withDefault(_List_Nil),
+			$elm$core$List$length));
+	return A3(
+		$elm$core$List$foldr,
+		$elm$core$List$map2($elm$core$List$cons),
+		A2(
+			$elm$core$List$repeat,
+			numCols(xss),
+			_List_Nil),
+		xss);
+};
+var $gicentre$elm_vegalite$VegaLite$dataFromColumns = F2(
+	function (fmts, cols) {
+		var dataArray = A2(
+			$elm$json$Json$Encode$list,
+			$elm$json$Json$Encode$object,
+			$gicentre$elm_vegalite$VegaLite$transpose(cols));
+		return _Utils_eq(fmts, _List_Nil) ? _Utils_Tuple2(
+			10,
+			$elm$json$Json$Encode$object(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('values', dataArray)
+					]))) : _Utils_Tuple2(
+			10,
+			$elm$json$Json$Encode$object(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('values', dataArray),
+						_Utils_Tuple2(
+						'format',
+						$elm$json$Json$Encode$object(
+							A2($elm$core$List$concatMap, $gicentre$elm_vegalite$VegaLite$formatProperties, fmts)))
+					])));
+	});
+var $gicentre$elm_vegalite$VegaLite$DNumbers = function (a) {
+	return {$: 0, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$doNums = $gicentre$elm_vegalite$VegaLite$DNumbers;
+var $folkertdev$elm_state$State$State = $elm$core$Basics$identity;
+var $folkertdev$elm_state$State$map = F2(
+	function (f, _v0) {
+		var step = _v0;
+		return function (currentState) {
+			var _v1 = step(currentState);
+			var value = _v1.a;
+			var newState = _v1.b;
+			return _Utils_Tuple2(
+				f(value),
+				newState);
+		};
+	});
+var $gicentre$elm_vegalite$VegaLite$Numbers = function (a) {
+	return {$: 2, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$nums = $gicentre$elm_vegalite$VegaLite$Numbers;
+var $gicentre$elm_vegalite$VegaLite$pNominal = $gicentre$elm_vegalite$VegaLite$PmType(0);
+var $gicentre$elm_vegalite$VegaLite$pQuant = $gicentre$elm_vegalite$VegaLite$PmType(2);
+var $gicentre$elm_vegalite$VegaLite$PScale = function (a) {
+	return {$: 11, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$pScale = $gicentre$elm_vegalite$VegaLite$PScale;
+var $gicentre$elm_vegalite$VegaLite$SDomain = function (a) {
+	return {$: 1, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$scDomain = $gicentre$elm_vegalite$VegaLite$SDomain;
+var $gicentre$elm_vegalite$VegaLite$Strings = function (a) {
+	return {$: 3, a: a};
+};
+var $gicentre$elm_vegalite$VegaLite$strs = $gicentre$elm_vegalite$VegaLite$Strings;
+var $elm$core$Dict$values = function (dict) {
+	return A3(
+		$elm$core$Dict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2($elm$core$List$cons, value, valueList);
+			}),
+		_List_Nil,
+		dict);
+};
+var $folkertdev$elm_state$State$Done = function (a) {
+	return {$: 1, a: a};
+};
+var $folkertdev$elm_state$State$Loop = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Distribution$Gamma$GammaDist = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $author$project$Distribution$Gamma$gammaDist = F2(
+	function (shape_, scale_) {
+		return ((shape_ <= 0.0) || (scale_ <= 0.0)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+			A2($author$project$Distribution$Gamma$GammaDist, shape_, scale_));
+	});
+var $folkertdev$elm_state$State$map2 = F3(
+	function (f, _v0, _v1) {
+		var step1 = _v0;
+		var step2 = _v1;
+		return function (currentState) {
+			var _v2 = step1(currentState);
+			var value1 = _v2.a;
+			var newState = _v2.b;
+			var _v3 = step2(newState);
+			var value2 = _v3.a;
+			var newerState = _v3.b;
+			return _Utils_Tuple2(
+				A2(f, value1, value2),
+				newerState);
+		};
+	});
+var $folkertdev$elm_state$State$advance = function (f) {
+	return f;
+};
+var $elm$random$Random$Generator = $elm$core$Basics$identity;
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$float = F2(
+	function (a, b) {
+		return function (seed0) {
+			var seed1 = $elm$random$Random$next(seed0);
+			var range = $elm$core$Basics$abs(b - a);
+			var n1 = $elm$random$Random$peel(seed1);
+			var n0 = $elm$random$Random$peel(seed0);
+			var lo = (134217727 & n1) * 1.0;
+			var hi = (67108863 & n0) * 1.0;
+			var val = ((hi * 134217728.0) + lo) / 9007199254740992.0;
+			var scaled = (val * range) + a;
+			return _Utils_Tuple2(
+				scaled,
+				$elm$random$Random$next(seed1));
+		};
+	});
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0;
+		return generator(seed);
+	});
+var $author$project$Rand$drawUniform = $folkertdev$elm_state$State$advance(
+	$elm$random$Random$step(
+		A2($elm$random$Random$float, 0, 1)));
+var $folkertdev$elm_state$State$andThen = F2(
+	function (f, _v0) {
+		var h = _v0;
+		return function (s) {
+			var _v1 = h(s);
+			var a = _v1.a;
+			var newState = _v1.b;
+			var _v2 = f(a);
+			var g = _v2;
+			return g(newState);
+		};
+	});
+var $elm$core$Basics$cos = _Basics_cos;
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0;
+		var genB = _v1;
+		return function (seed0) {
+			var _v2 = genA(seed0);
+			var a = _v2.a;
+			var seed1 = _v2.b;
+			var _v3 = genB(seed1);
+			var b = _v3.a;
+			var seed2 = _v3.b;
+			return _Utils_Tuple2(
+				A2(func, a, b),
+				seed2);
+		};
+	});
+var $elm$core$Basics$pi = _Basics_pi;
+var $elm$core$Basics$sqrt = _Basics_sqrt;
+var $elm_community$random_extra$Random$Float$standardNormal = A3(
+	$elm$random$Random$map2,
+	F2(
+		function (u, theta) {
+			return $elm$core$Basics$sqrt(
+				(-2) * A2(
+					$elm$core$Basics$logBase,
+					$elm$core$Basics$e,
+					1 - A2($elm$core$Basics$max, 0, u))) * $elm$core$Basics$cos(theta);
+		}),
+	A2($elm$random$Random$float, 0, 1),
+	A2($elm$random$Random$float, 0, 2 * $elm$core$Basics$pi));
+var $author$project$Rand$drawStandardNormal = $folkertdev$elm_state$State$advance(
+	$elm$random$Random$step($elm_community$random_extra$Random$Float$standardNormal));
+var $folkertdev$elm_state$State$state = function (value) {
+	return function (s) {
+		return _Utils_Tuple2(value, s);
+	};
+};
+var $author$project$Distribution$Gamma$gaussianXV = F3(
+	function (c, x, v) {
+		var calcXV = function (newX) {
+			return (v > 0.0) ? $folkertdev$elm_state$State$state(
+				_Utils_Tuple2(x, v)) : A3($author$project$Distribution$Gamma$gaussianXV, c, newX, 1.0 + (c * newX));
+		};
+		return A2($folkertdev$elm_state$State$andThen, calcXV, $author$project$Rand$drawStandardNormal);
+	});
+var $author$project$Distribution$Gamma$gammaDeviateRec = F2(
+	function (d, c) {
+		var drawXVU = A3(
+			$folkertdev$elm_state$State$map2,
+			F2(
+				function (xv, u) {
+					return _Utils_Tuple3(xv.a, xv.b, u);
+				}),
+			A3($author$project$Distribution$Gamma$gaussianXV, c, 0.0, 0.0),
+			$author$project$Rand$drawUniform);
+		var calcResult = function (xvu) {
+			var _v0 = xvu;
+			var x = _v0.a;
+			var v = _v0.b;
+			var u = _v0.c;
+			var v3 = (v * v) * v;
+			var result = d * v3;
+			var x2 = x * x;
+			return ((_Utils_cmp(u, 1.0 - ((0.0331 * x2) * x2)) < 0) || (_Utils_cmp(
+				A2($elm$core$Basics$logBase, 10, u),
+				(0.5 * x2) + (d * ((1.0 - v3) + A2($elm$core$Basics$logBase, 10, v3)))) < 0)) ? $folkertdev$elm_state$State$state(result) : A2($author$project$Distribution$Gamma$gammaDeviateRec, d, c);
+		};
+		return A2($folkertdev$elm_state$State$andThen, calcResult, drawXVU);
+	});
+var $author$project$Distribution$Gamma$sampleHelper = function (s) {
+	var drawUV = A3(
+		$folkertdev$elm_state$State$map2,
+		F2(
+			function (uR, vR) {
+				return _Utils_Tuple2(
+					uR,
+					(-1.0) * A2($elm$core$Basics$logBase, 10, vR));
+			}),
+		$author$project$Rand$drawUniform,
+		$author$project$Rand$drawUniform);
+	var calcResult = function (uv) {
+		var _v0 = uv;
+		var u = _v0.a;
+		var v = _v0.b;
+		if (_Utils_cmp(u, 1.0 - s) < 1) {
+			var x = A2($elm$core$Basics$pow, u, 1.0 / s);
+			return (_Utils_cmp(x, v) < 1) ? $folkertdev$elm_state$State$state(x) : $author$project$Distribution$Gamma$sampleHelper(s);
+		} else {
+			var y = (-1.0) * A2($elm$core$Basics$logBase, 10, (1 - u) / s);
+			var x = A2($elm$core$Basics$pow, (1.0 - s) + (s * y), 1.0 / s);
+			return (_Utils_cmp(x, v + y) < 1) ? $folkertdev$elm_state$State$state(x) : $author$project$Distribution$Gamma$sampleHelper(s);
+		}
+	};
+	return A2($folkertdev$elm_state$State$andThen, calcResult, drawUV);
+};
+var $author$project$Distribution$Gamma$scale = function (_v0) {
+	var sc = _v0.b;
+	return sc;
+};
+var $author$project$Distribution$Gamma$shape = function (_v0) {
+	var sh = _v0.a;
+	return sh;
+};
+var $author$project$Distribution$Gamma$sample = function (dist) {
+	var distShape = $author$project$Distribution$Gamma$shape(dist);
+	var distScale = $author$project$Distribution$Gamma$scale(dist);
+	if (distShape === 1.0) {
+		return A2(
+			$folkertdev$elm_state$State$map,
+			function (r) {
+				return (distScale * (-1.0)) * A2($elm$core$Basics$logBase, 10, r);
+			},
+			$author$project$Rand$drawUniform);
+	} else {
+		if (distShape < 1.0) {
+			return A2(
+				$folkertdev$elm_state$State$map,
+				function (r) {
+					return distScale * r;
+				},
+				$author$project$Distribution$Gamma$sampleHelper(distShape));
+		} else {
+			var d = distShape - (1.0 / 3.0);
+			var c = 1.0 / $elm$core$Basics$sqrt(9.0 * d);
+			return A2(
+				$folkertdev$elm_state$State$map,
+				function (r) {
+					return distScale * r;
+				},
+				A2($author$project$Distribution$Gamma$gammaDeviateRec, d, c));
+		}
+	}
+};
+var $author$project$Distribution$Beta$sample = function (dist) {
+	var sampleParamGamma = function (x) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			$folkertdev$elm_state$State$state(0),
+			A2(
+				$elm$core$Maybe$map,
+				$author$project$Distribution$Gamma$sample,
+				A2($author$project$Distribution$Gamma$gammaDist, x, 1.0)));
+	};
+	var b = $author$project$Distribution$Beta$beta(dist);
+	var a = $author$project$Distribution$Beta$alpha(dist);
+	return ((a <= 0.5) && (b <= 0.5)) ? $folkertdev$elm_state$State$state(0) : (((a <= 1.0) && (b <= 1.0)) ? $folkertdev$elm_state$State$state(0) : A3(
+		$folkertdev$elm_state$State$map2,
+		F2(
+			function (aGamma, bGamma) {
+				return aGamma / (aGamma + bGamma);
+			}),
+		sampleParamGamma(a),
+		sampleParamGamma(b)));
+};
+var $author$project$BayesBandit$Bernoulli$betaSample = function (bernoulli) {
+	var betaResult = A2(
+		$author$project$Distribution$Beta$betaDist,
+		$author$project$Distribution$Bernoulli$successes(bernoulli) + 1,
+		$author$project$Distribution$Bernoulli$failures(bernoulli) + 1);
+	return A2(
 		$elm$core$Maybe$withDefault,
-		$elm$core$Dict$empty,
-		A4(
-			$elm$core$Maybe$map3,
-			F3(
-				function (a, b, c) {
-					return $elm$core$Dict$fromList(
+		$folkertdev$elm_state$State$state(0),
+		A2($elm$core$Maybe$map, $author$project$Distribution$Beta$sample, betaResult));
+};
+var $author$project$BayesBandit$Bernoulli$betaSampleVariant = F2(
+	function (variant, bernoulli) {
+		return A2(
+			$folkertdev$elm_state$State$map,
+			function (b) {
+				return _Utils_Tuple2(variant, b);
+			},
+			$author$project$BayesBandit$Bernoulli$betaSample(bernoulli));
+	});
+var $folkertdev$elm_state$State$tailRec = function (f) {
+	var go = function (step) {
+		go:
+		while (true) {
+			if (!step.$) {
+				var a = step.a;
+				var $temp$step = f(a);
+				step = $temp$step;
+				continue go;
+			} else {
+				var b = step.a;
+				return b;
+			}
+		}
+	};
+	return A2($elm$core$Basics$composeL, go, f);
+};
+var $folkertdev$elm_state$State$tailRecM = F2(
+	function (f, a) {
+		var helper = function (_v3) {
+			var m = _v3.a;
+			var s1 = _v3.b;
+			if (!m.$) {
+				var x = m.a;
+				return $folkertdev$elm_state$State$Loop(
+					_Utils_Tuple2(x, s1));
+			} else {
+				var y = m.a;
+				return $folkertdev$elm_state$State$Done(
+					_Utils_Tuple2(y, s1));
+			}
+		};
+		var step = function (_v1) {
+			var value = _v1.a;
+			var s = _v1.b;
+			var _v0 = f(value);
+			var st = _v0;
+			return helper(
+				st(s));
+		};
+		return function (s) {
+			return A2(
+				$folkertdev$elm_state$State$tailRec,
+				step,
+				_Utils_Tuple2(a, s));
+		};
+	});
+var $folkertdev$elm_state$State$tailRecM2 = F3(
+	function (f, a, b) {
+		return A2(
+			$folkertdev$elm_state$State$tailRecM,
+			function (_v0) {
+				var x = _v0.a;
+				var y = _v0.b;
+				return A2(f, x, y);
+			},
+			_Utils_Tuple2(a, b));
+	});
+var $folkertdev$elm_state$State$foldlM = function (f) {
+	var step = F2(
+		function (accum, elements) {
+			if (!elements.b) {
+				return $folkertdev$elm_state$State$state(
+					$folkertdev$elm_state$State$Done(accum));
+			} else {
+				var x = elements.a;
+				var xs = elements.b;
+				return A2(
+					$folkertdev$elm_state$State$map,
+					function (a_) {
+						return $folkertdev$elm_state$State$Loop(
+							_Utils_Tuple2(a_, xs));
+					},
+					A2(f, accum, x));
+			}
+		});
+	return $folkertdev$elm_state$State$tailRecM2(step);
+};
+var $folkertdev$elm_state$State$traverse = function (f) {
+	return A2(
+		$elm$core$Basics$composeL,
+		$folkertdev$elm_state$State$map($elm$core$List$reverse),
+		A2(
+			$folkertdev$elm_state$State$foldlM,
+			F2(
+				function (accum, elem) {
+					return A3(
+						$folkertdev$elm_state$State$map2,
+						$elm$core$List$cons,
+						f(elem),
+						$folkertdev$elm_state$State$state(accum));
+				}),
+			_List_Nil));
+};
+var $folkertdev$elm_state$State$combine = $folkertdev$elm_state$State$traverse($elm$core$Basics$identity);
+var $elm_community$list_extra$List$Extra$maximumBy = F2(
+	function (f, ls) {
+		var maxBy = F2(
+			function (x, _v1) {
+				var y = _v1.a;
+				var fy = _v1.b;
+				var fx = f(x);
+				return (_Utils_cmp(fx, fy) > 0) ? _Utils_Tuple2(x, fx) : _Utils_Tuple2(y, fy);
+			});
+		if (ls.b) {
+			if (!ls.b.b) {
+				var l_ = ls.a;
+				return $elm$core$Maybe$Just(l_);
+			} else {
+				var l_ = ls.a;
+				var ls_ = ls.b;
+				return $elm$core$Maybe$Just(
+					A3(
+						$elm$core$List$foldl,
+						maxBy,
+						_Utils_Tuple2(
+							l_,
+							f(l_)),
+						ls_).a);
+			}
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$BayesBandit$Bernoulli$choose = function (variants) {
+	var variantSamples = $folkertdev$elm_state$State$combine(
+		A2(
+			$elm$core$List$map,
+			function (_v0) {
+				var variant = _v0.a;
+				var bernoulli = _v0.b;
+				return A2($author$project$BayesBandit$Bernoulli$betaSampleVariant, variant, bernoulli);
+			},
+			$elm$core$Dict$toList(variants)));
+	var bestVariant = function (vs) {
+		return A2(
+			$elm$core$Maybe$map,
+			$elm$core$Tuple$first,
+			A2($elm_community$list_extra$List$Extra$maximumBy, $elm$core$Tuple$second, vs));
+	};
+	return A2($folkertdev$elm_state$State$map, bestVariant, variantSamples);
+};
+var $elm$core$Dict$get = F2(
+	function (targetKey, dict) {
+		get:
+		while (true) {
+			if (dict.$ === -2) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var _v1 = A2($elm$core$Basics$compare, targetKey, key);
+				switch (_v1) {
+					case 0:
+						var $temp$targetKey = targetKey,
+							$temp$dict = left;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+					case 1:
+						return $elm$core$Maybe$Just(value);
+					default:
+						var $temp$targetKey = targetKey,
+							$temp$dict = right;
+						targetKey = $temp$targetKey;
+						dict = $temp$dict;
+						continue get;
+				}
+			}
+		}
+	});
+var $elm$core$Dict$getMin = function (dict) {
+	getMin:
+	while (true) {
+		if ((dict.$ === -1) && (dict.d.$ === -1)) {
+			var left = dict.d;
+			var $temp$dict = left;
+			dict = $temp$dict;
+			continue getMin;
+		} else {
+			return dict;
+		}
+	}
+};
+var $elm$core$Dict$moveRedLeft = function (dict) {
+	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
+		if ((dict.e.d.$ === -1) && (!dict.e.d.a)) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var lLeft = _v1.d;
+			var lRight = _v1.e;
+			var _v2 = dict.e;
+			var rClr = _v2.a;
+			var rK = _v2.b;
+			var rV = _v2.c;
+			var rLeft = _v2.d;
+			var _v3 = rLeft.a;
+			var rlK = rLeft.b;
+			var rlV = rLeft.c;
+			var rlL = rLeft.d;
+			var rlR = rLeft.e;
+			var rRight = _v2.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				0,
+				rlK,
+				rlV,
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					rlL),
+				A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rlR, rRight));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v4 = dict.d;
+			var lClr = _v4.a;
+			var lK = _v4.b;
+			var lV = _v4.c;
+			var lLeft = _v4.d;
+			var lRight = _v4.e;
+			var _v5 = dict.e;
+			var rClr = _v5.a;
+			var rK = _v5.b;
+			var rV = _v5.c;
+			var rLeft = _v5.d;
+			var rRight = _v5.e;
+			if (clr === 1) {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$moveRedRight = function (dict) {
+	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
+		if ((dict.d.d.$ === -1) && (!dict.d.d.a)) {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v1 = dict.d;
+			var lClr = _v1.a;
+			var lK = _v1.b;
+			var lV = _v1.c;
+			var _v2 = _v1.d;
+			var _v3 = _v2.a;
+			var llK = _v2.b;
+			var llV = _v2.c;
+			var llLeft = _v2.d;
+			var llRight = _v2.e;
+			var lRight = _v1.e;
+			var _v4 = dict.e;
+			var rClr = _v4.a;
+			var rK = _v4.b;
+			var rV = _v4.c;
+			var rLeft = _v4.d;
+			var rRight = _v4.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				0,
+				lK,
+				lV,
+				A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+				A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					lRight,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight)));
+		} else {
+			var clr = dict.a;
+			var k = dict.b;
+			var v = dict.c;
+			var _v5 = dict.d;
+			var lClr = _v5.a;
+			var lK = _v5.b;
+			var lV = _v5.c;
+			var lLeft = _v5.d;
+			var lRight = _v5.e;
+			var _v6 = dict.e;
+			var rClr = _v6.a;
+			var rK = _v6.b;
+			var rV = _v6.c;
+			var rLeft = _v6.d;
+			var rRight = _v6.e;
+			if (clr === 1) {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					1,
+					k,
+					v,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
+			}
+		}
+	} else {
+		return dict;
+	}
+};
+var $elm$core$Dict$removeHelpPrepEQGT = F7(
+	function (targetKey, dict, color, key, value, left, right) {
+		if ((left.$ === -1) && (!left.a)) {
+			var _v1 = left.a;
+			var lK = left.b;
+			var lV = left.c;
+			var lLeft = left.d;
+			var lRight = left.e;
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				lK,
+				lV,
+				lLeft,
+				A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, lRight, right));
+		} else {
+			_v2$2:
+			while (true) {
+				if ((right.$ === -1) && (right.a === 1)) {
+					if (right.d.$ === -1) {
+						if (right.d.a === 1) {
+							var _v3 = right.a;
+							var _v4 = right.d;
+							var _v5 = _v4.a;
+							return $elm$core$Dict$moveRedRight(dict);
+						} else {
+							break _v2$2;
+						}
+					} else {
+						var _v6 = right.a;
+						var _v7 = right.d;
+						return $elm$core$Dict$moveRedRight(dict);
+					}
+				} else {
+					break _v2$2;
+				}
+			}
+			return dict;
+		}
+	});
+var $elm$core$Dict$removeMin = function (dict) {
+	if ((dict.$ === -1) && (dict.d.$ === -1)) {
+		var color = dict.a;
+		var key = dict.b;
+		var value = dict.c;
+		var left = dict.d;
+		var lColor = left.a;
+		var lLeft = left.d;
+		var right = dict.e;
+		if (lColor === 1) {
+			if ((lLeft.$ === -1) && (!lLeft.a)) {
+				var _v3 = lLeft.a;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					key,
+					value,
+					$elm$core$Dict$removeMin(left),
+					right);
+			} else {
+				var _v4 = $elm$core$Dict$moveRedLeft(dict);
+				if (_v4.$ === -1) {
+					var nColor = _v4.a;
+					var nKey = _v4.b;
+					var nValue = _v4.c;
+					var nLeft = _v4.d;
+					var nRight = _v4.e;
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						$elm$core$Dict$removeMin(nLeft),
+						nRight);
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			}
+		} else {
+			return A5(
+				$elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				value,
+				$elm$core$Dict$removeMin(left),
+				right);
+		}
+	} else {
+		return $elm$core$Dict$RBEmpty_elm_builtin;
+	}
+};
+var $elm$core$Dict$removeHelp = F2(
+	function (targetKey, dict) {
+		if (dict.$ === -2) {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_cmp(targetKey, key) < 0) {
+				if ((left.$ === -1) && (left.a === 1)) {
+					var _v4 = left.a;
+					var lLeft = left.d;
+					if ((lLeft.$ === -1) && (!lLeft.a)) {
+						var _v6 = lLeft.a;
+						return A5(
+							$elm$core$Dict$RBNode_elm_builtin,
+							color,
+							key,
+							value,
+							A2($elm$core$Dict$removeHelp, targetKey, left),
+							right);
+					} else {
+						var _v7 = $elm$core$Dict$moveRedLeft(dict);
+						if (_v7.$ === -1) {
+							var nColor = _v7.a;
+							var nKey = _v7.b;
+							var nValue = _v7.c;
+							var nLeft = _v7.d;
+							var nRight = _v7.e;
+							return A5(
+								$elm$core$Dict$balance,
+								nColor,
+								nKey,
+								nValue,
+								A2($elm$core$Dict$removeHelp, targetKey, nLeft),
+								nRight);
+						} else {
+							return $elm$core$Dict$RBEmpty_elm_builtin;
+						}
+					}
+				} else {
+					return A5(
+						$elm$core$Dict$RBNode_elm_builtin,
+						color,
+						key,
+						value,
+						A2($elm$core$Dict$removeHelp, targetKey, left),
+						right);
+				}
+			} else {
+				return A2(
+					$elm$core$Dict$removeHelpEQGT,
+					targetKey,
+					A7($elm$core$Dict$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
+			}
+		}
+	});
+var $elm$core$Dict$removeHelpEQGT = F2(
+	function (targetKey, dict) {
+		if (dict.$ === -1) {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			if (_Utils_eq(targetKey, key)) {
+				var _v1 = $elm$core$Dict$getMin(right);
+				if (_v1.$ === -1) {
+					var minKey = _v1.b;
+					var minValue = _v1.c;
+					return A5(
+						$elm$core$Dict$balance,
+						color,
+						minKey,
+						minValue,
+						left,
+						$elm$core$Dict$removeMin(right));
+				} else {
+					return $elm$core$Dict$RBEmpty_elm_builtin;
+				}
+			} else {
+				return A5(
+					$elm$core$Dict$balance,
+					color,
+					key,
+					value,
+					left,
+					A2($elm$core$Dict$removeHelp, targetKey, right));
+			}
+		} else {
+			return $elm$core$Dict$RBEmpty_elm_builtin;
+		}
+	});
+var $elm$core$Dict$remove = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$removeHelp, key, dict);
+		if ((_v0.$ === -1) && (!_v0.a)) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Dict$update = F3(
+	function (targetKey, alter, dictionary) {
+		var _v0 = alter(
+			A2($elm$core$Dict$get, targetKey, dictionary));
+		if (!_v0.$) {
+			var value = _v0.a;
+			return A3($elm$core$Dict$insert, targetKey, value, dictionary);
+		} else {
+			return A2($elm$core$Dict$remove, targetKey, dictionary);
+		}
+	});
+var $author$project$BayesBandit$Bernoulli$thompsonSample = F2(
+	function (variants, numSamples) {
+		var initialTimesBest = A2(
+			$elm$core$Dict$map,
+			F2(
+				function (_v7, brn) {
+					return _Utils_Tuple2(brn, 0);
+				}),
+			variants);
+		var go = function (_v6) {
+			var vs = _v6.a;
+			var n = _v6.b;
+			if (!n) {
+				return $folkertdev$elm_state$State$state(
+					$folkertdev$elm_state$State$Done(vs));
+			} else {
+				var maybeBestVariant = $author$project$BayesBandit$Bernoulli$choose(
+					A2(
+						$elm$core$Dict$map,
+						F2(
+							function (_v4, _v5) {
+								var bernoulli = _v5.a;
+								return bernoulli;
+							}),
+						vs));
+				var incrTimesBest = $elm$core$Maybe$map(
+					function (_v3) {
+						var bernoulli = _v3.a;
+						var timesBest = _v3.b;
+						return _Utils_Tuple2(bernoulli, timesBest + 1);
+					});
+				var updateTimesBest = function (variant) {
+					return A3($elm$core$Dict$update, variant, incrTimesBest, vs);
+				};
+				return A2(
+					$folkertdev$elm_state$State$map,
+					function (maybeBV) {
+						if (!maybeBV.$) {
+							var bv = maybeBV.a;
+							return $folkertdev$elm_state$State$Loop(
+								_Utils_Tuple2(
+									updateTimesBest(bv),
+									n - 1));
+						} else {
+							return $folkertdev$elm_state$State$Done(vs);
+						}
+					},
+					maybeBestVariant);
+			}
+		};
+		return A2(
+			$folkertdev$elm_state$State$map,
+			$elm$core$Dict$map(
+				F2(
+					function (_v0, _v1) {
+						var timesBest = _v1.b;
+						return timesBest;
+					})),
+			A2(
+				$folkertdev$elm_state$State$tailRecM,
+				go,
+				_Utils_Tuple2(initialTimesBest, numSamples)));
+	});
+var $author$project$BayesBandit$Bernoulli$winnerProbabilities = function (variants) {
+	var numSamples = 300000;
+	return A2(
+		$folkertdev$elm_state$State$map,
+		$elm$core$Dict$map(
+			F2(
+				function (_v0, timesBest) {
+					return timesBest / numSamples;
+				})),
+		A2($author$project$BayesBandit$Bernoulli$thompsonSample, variants, numSamples));
+};
+var $author$project$BayesBandit$Bernoulli$winnersVis = function (variants) {
+	var enc = A2(
+		$elm$core$Basics$composeL,
+		A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				$gicentre$elm_vegalite$VegaLite$encoding,
+				A2(
+					$gicentre$elm_vegalite$VegaLite$position,
+					1,
+					_List_fromArray(
+						[
+							$gicentre$elm_vegalite$VegaLite$pName('Variant'),
+							$gicentre$elm_vegalite$VegaLite$pNominal
+						]))),
+			A2(
+				$gicentre$elm_vegalite$VegaLite$position,
+				0,
+				_List_fromArray(
+					[
+						$gicentre$elm_vegalite$VegaLite$pName('Winner Likelihood'),
+						$gicentre$elm_vegalite$VegaLite$pQuant,
+						$gicentre$elm_vegalite$VegaLite$pScale(
 						_List_fromArray(
 							[
-								_Utils_Tuple2('A', a),
-								_Utils_Tuple2('B', b),
-								_Utils_Tuple2('C', c)
-							]));
-				}),
-			A2($author$project$Distribution$Bernoulli$bernoulli, 1, 10),
-			A2($author$project$Distribution$Bernoulli$bernoulli, 10, 100),
-			A2($author$project$Distribution$Bernoulli$bernoulli, 12, 99)));
-	return $author$project$BayesBandit$Bernoulli$pdfsVis(variants);
-}();
+								$gicentre$elm_vegalite$VegaLite$scDomain(
+								$gicentre$elm_vegalite$VegaLite$doNums(
+									_List_fromArray(
+										[0.0, 1.0])))
+							]))
+					]))),
+		$gicentre$elm_vegalite$VegaLite$color(
+			_List_fromArray(
+				[
+					$gicentre$elm_vegalite$VegaLite$mName('Variant'),
+					$gicentre$elm_vegalite$VegaLite$mMType(0),
+					$gicentre$elm_vegalite$VegaLite$mScale(
+					_List_fromArray(
+						[
+							A2($gicentre$elm_vegalite$VegaLite$scScheme, 'set2', _List_Nil)
+						]))
+				])));
+	var data = function (probabilities) {
+		return A2(
+			$elm$core$Basics$composeL,
+			A2(
+				$elm$core$Basics$composeL,
+				$gicentre$elm_vegalite$VegaLite$dataFromColumns(_List_Nil),
+				A2(
+					$gicentre$elm_vegalite$VegaLite$dataColumn,
+					'Variant',
+					$gicentre$elm_vegalite$VegaLite$strs(
+						$elm$core$Dict$keys(probabilities)))),
+			A2(
+				$gicentre$elm_vegalite$VegaLite$dataColumn,
+				'Winner Likelihood',
+				$gicentre$elm_vegalite$VegaLite$nums(
+					$elm$core$Dict$values(probabilities))));
+	};
+	return A2(
+		$folkertdev$elm_state$State$map,
+		function (probabilities) {
+			return $gicentre$elm_vegalite$VegaLite$toVegaLite(
+				_List_fromArray(
+					[
+						$gicentre$elm_vegalite$VegaLite$widthOfContainer,
+						$gicentre$elm_vegalite$VegaLite$heightOfContainer,
+						A2(data, probabilities, _List_Nil),
+						enc(_List_Nil),
+						$gicentre$elm_vegalite$VegaLite$bar(_List_Nil)
+					]));
+		},
+		$author$project$BayesBandit$Bernoulli$winnerProbabilities(variants));
+};
+var $author$project$BernoulliBayesBandit$winnersVis = function (variants) {
+	return A2(
+		$folkertdev$elm_state$State$run,
+		$elm$random$Random$initialSeed(42),
+		$author$project$BayesBandit$Bernoulli$winnersVis(variants)).a;
+};
+var $author$project$Distribution$Bernoulli$zero = A2($author$project$Distribution$Bernoulli$BernoulliDist, 0, 0);
+var $author$project$BernoulliBayesBandit$init = function (flags) {
+	var variants = $elm$core$Dict$fromList(
+		A2(
+			$elm$core$List$map,
+			function (f) {
+				return _Utils_Tuple2(
+					f.L,
+					A2(
+						$elm$core$Maybe$withDefault,
+						$author$project$Distribution$Bernoulli$zero,
+						A2($author$project$Distribution$Bernoulli$bernoulli, f.K, f.E)));
+			},
+			flags));
+	var winners = $author$project$BernoulliBayesBandit$winnersVis(variants);
+	var uncertainty = $author$project$BernoulliBayesBandit$uncertaintyVis(variants);
+	return _Utils_Tuple2(
+		_Utils_Tuple2(uncertainty, winners),
+		$author$project$BernoulliBayesBandit$elmToJS(
+			A2($author$project$BernoulliBayesBandit$JSMsg, uncertainty, winners)));
+};
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $elm$json$Json$Decode$succeed = _Json_succeed;
 var $elm$core$Platform$worker = _Platform_worker;
 var $author$project$BernoulliBayesBandit$main = $elm$core$Platform$worker(
 	{
-		au: $elm$core$Basics$always(
-			_Utils_Tuple2(
-				$author$project$BernoulliBayesBandit$vis,
-				$author$project$BernoulliBayesBandit$elmToJS($author$project$BernoulliBayesBandit$vis))),
-		aC: $elm$core$Basics$always($elm$core$Platform$Sub$none),
-		aE: F2(
+		az: $author$project$BernoulliBayesBandit$init,
+		aH: $elm$core$Basics$always($elm$core$Platform$Sub$none),
+		aJ: F2(
 			function (_v0, model) {
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			})
 	});
 _Platform_export({'BernoulliBayesBandit':{'init':$author$project$BernoulliBayesBandit$main(
-	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
+	$elm$json$Json$Decode$list(
+		A2(
+			$elm$json$Json$Decode$andThen,
+			function (variant) {
+				return A2(
+					$elm$json$Json$Decode$andThen,
+					function (successes) {
+						return A2(
+							$elm$json$Json$Decode$andThen,
+							function (failures) {
+								return $elm$json$Json$Decode$succeed(
+									{E: failures, K: successes, L: variant});
+							},
+							A2($elm$json$Json$Decode$field, 'failures', $elm$json$Json$Decode$int));
+					},
+					A2($elm$json$Json$Decode$field, 'successes', $elm$json$Json$Decode$int));
+			},
+			A2($elm$json$Json$Decode$field, 'variant', $elm$json$Json$Decode$string))))(0)}});}(this));

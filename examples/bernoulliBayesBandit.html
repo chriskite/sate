@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Example Bernoulli Bayes Bandit</title>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
     <!-- Vega-Lite runtime -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
@@ -13,12 +13,21 @@
 </head>
 
 <body>
-<div id="winners"></div>
+<div id="winners" style="width: 1024px; height: 300px"></div>
 <div id="uncertainty" style="width: 1024px; height: 800px"></div>
 
 <script>
-    Elm.BernoulliBayesBandit.init().ports.elmToJS.subscribe(function(specs) {
-        vegaEmbed("#uncertainty", specs, { actions: false }).catch(console.warn);
+    Elm.BernoulliBayesBandit.init(
+        {
+            flags: [
+                {variant: "A", successes: 1, failures: 10},
+                {variant: "B", successes: 10, failures: 100},
+                {variant: "C", successes: 12, failures: 99},
+            ]
+        }
+    ).ports.elmToJS.subscribe(function (specs) {
+        vegaEmbed("#winners", specs.winners, {actions: false}).catch(console.warn);
+        vegaEmbed("#uncertainty", specs.uncertainty, {actions: false}).catch(console.warn);
     });
 </script>
 </body>

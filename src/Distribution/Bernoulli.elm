@@ -7,6 +7,11 @@ type BernoulliDist
     = BernoulliDist Int Int
 
 
+zero : BernoulliDist
+zero =
+    BernoulliDist 0 0
+
+
 bernoulli : Int -> Int -> Maybe BernoulliDist
 bernoulli numSuccesses numFailures =
     if numSuccesses < 0 || numFailures < 0 then

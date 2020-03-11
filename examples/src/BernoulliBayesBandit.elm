@@ -1,33 +1,59 @@
 port module BernoulliBayesBandit exposing (elmToJS)
 
 import BayesBandit.Bernoulli
-import Dict
-import Distribution.Bernoulli exposing (bernoulli)
+import Dict exposing (Dict)
+import Distribution.Bernoulli exposing (BernoulliDist, bernoulli)
 import Platform
+import Random
+import State
+import Tuple exposing (first)
 import VegaLite exposing (..)
 
 
-vis : Spec
-vis =
-    let
-        variants =
-            Maybe.map3
-                (\a b c -> Dict.fromList [ ( "A", a ), ( "B", b ), ( "C", c ) ])
-                (bernoulli 1 10)
-                (bernoulli 10 100)
-                (bernoulli 12 99)
-                |> Maybe.withDefault Dict.empty
-    in
+type alias JSMsg =
+    { uncertainty : Spec, winners : Spec }
+
+
+type alias VariantData =
+    { variant : String, successes : Int, failures : Int }
+
+
+uncertaintyVis : Dict String BernoulliDist -> Spec
+uncertaintyVis variants =
     BayesBandit.Bernoulli.pdfsVis variants
 
 
-main : Program () Spec msg
+winnersVis : Dict String BernoulliDist -> Spec
+winnersVis variants =
+    BayesBandit.Bernoulli.winnersVis variants
+        |> State.run (Random.initialSeed 42)
+        |> first
+
+
+init : List VariantData -> ( ( Spec, Spec ), Cmd msg )
+init flags =
+    let
+        variants =
+            flags
+                |> List.map (\f -> ( f.variant, bernoulli f.successes f.failures |> Maybe.withDefault Distribution.Bernoulli.zero ))
+                |> Dict.fromList
+
+        uncertainty =
+            uncertaintyVis variants
+
+        winners =
+            winnersVis variants
+    in
+    ( ( uncertainty, winners ), elmToJS (JSMsg uncertainty winners) )
+
+
+main : Program (List VariantData) ( Spec, Spec ) msg
 main =
     Platform.worker
-        { init = always ( vis, elmToJS vis )
+        { init = init
         , update = \_ model -> ( model, Cmd.none )
         , subscriptions = always Sub.none
         }
 
 
-port elmToJS : Spec -> Cmd msg
+port elmToJS : JSMsg -> Cmd msg

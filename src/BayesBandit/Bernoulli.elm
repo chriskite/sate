@@ -1,4 +1,4 @@
-module BayesBandit.Bernoulli exposing (choose, pdfsVis, winnerProbabilities)
+module BayesBandit.Bernoulli exposing (choose, pdfsVis, winnerProbabilities, winnersVis)
 
 import Dict exposing (Dict)
 import Distribution.Bernoulli exposing (BernoulliDist, failures, successes)
@@ -28,6 +28,30 @@ winnerProbabilities variants =
         |> State.map (Dict.map (\_ timesBest -> toFloat timesBest / numSamples))
 
 
+{-| Create a VegaLite visualization Spec for a horizontal bar graph of the winner likelihoods
+-}
+winnersVis : Dict String BernoulliDist -> State Seed Spec
+winnersVis variants =
+    let
+        data probabilities =
+            dataFromColumns []
+                << dataColumn "Variant" (strs (Dict.keys probabilities))
+                << dataColumn "Winner Likelihood" (nums (Dict.values probabilities))
+
+        enc =
+            encoding
+                << position Y [ pName "Variant", pNominal ]
+                << position X [ pName "Winner Likelihood", pQuant, pScale [ scDomain (doNums [ 0.0, 1.0 ]) ] ]
+                << color [ mName "Variant", mMType Nominal, mScale [ scScheme "set2" [] ] ]
+    in
+    State.map
+        (\probabilities ->
+            toVegaLite
+                [ widthOfContainer, heightOfContainer, data probabilities [], enc [], bar [] ]
+        )
+        (winnerProbabilities variants)
+
+
 {-| Create a VegaLite visualization Spec for the PDFs of the Beta posteriors of each variant
 -}
 pdfsVis : Dict String BernoulliDist -> Spec
@@ -55,7 +79,7 @@ pdfsVis variants =
                 |> List.concatMap second
 
         dataValueLists =
-            List.map (\lp -> [ ( "x", num lp.x ), ( "y", num lp.y ), ( "name", str lp.label ) ]) pdfPoints
+            List.map (\lp -> [ ( "x", num lp.x ), ( "y", num lp.y ), ( "Variant", str lp.label ) ]) pdfPoints
 
         data =
             List.foldl (\dvl acc -> acc << dataRow dvl) (dataFromRows []) dataValueLists
@@ -64,7 +88,7 @@ pdfsVis variants =
             encoding
                 << position X [ pName "x", pMType Quantitative ]
                 << position Y [ pName "y", pMType Quantitative ]
-                << color [ mName "name", mMType Nominal ]
+                << color [ mName "Variant", mMType Nominal, mScale [ scScheme "set2" [] ] ]
     in
     toVegaLite [ title "Beta PDFs" [], widthOfContainer, heightOfContainer, data [], enc [], line [ maInterpolate miMonotone ] ]
 
