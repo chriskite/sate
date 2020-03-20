@@ -1,5 +1,8 @@
 module Distribution.Beta exposing (BetaDist, alpha, beta, betaDist, pdf, sample, uniform)
 
+{-| Provides functions for describing and sampling a Beta distribution.
+-}
+
 import Distribution.Gamma exposing (GammaDist, gammaDist)
 import Math exposing (..)
 import Random exposing (Seed)

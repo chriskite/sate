@@ -1,5 +1,8 @@
 module Distribution.Gamma exposing (GammaDist, gammaDist, sample, scale, shape)
 
+{-| Provides functions for describing and sampling a Gamma distribution.
+-}
+
 import Rand
 import Random exposing (Seed)
 import State exposing (State, andThen, state)

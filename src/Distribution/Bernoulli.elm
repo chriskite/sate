@@ -1,5 +1,9 @@
 module Distribution.Bernoulli exposing (..)
 
+{-| Describes a Bernoulli distribution, and provides a function for calculating
+the Beta posterior.
+-}
+
 import Distribution.Beta exposing (BetaDist, alpha, beta, betaDist)
 
 

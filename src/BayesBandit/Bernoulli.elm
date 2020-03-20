@@ -1,5 +1,8 @@
 module BayesBandit.Bernoulli exposing (choose, pdfsVis, winnerProbabilities, winnersVis)
 
+{-| A Bernoulli Bayes Bandit, which can calculate winner probabilities and PDF visualizations.
+-}
+
 import Dict exposing (Dict)
 import Distribution.Bernoulli exposing (BernoulliDist, failures, successes)
 import Distribution.Beta exposing (BetaDist)
