@@ -1,4 +1,4 @@
-port module BernoulliBayesBandit exposing (elmToJS)
+port module BernoulliBayesBandit exposing (receiveVariants, sendVegaSpecs)
 
 import BayesBandit.Bernoulli
 import Dict exposing (Dict)
@@ -18,6 +18,14 @@ type alias VariantData =
     { variant : String, successes : Int, failures : Int }
 
 
+type alias Model =
+    List VariantData
+
+
+type Msg
+    = ReceivedFromJS Model
+
+
 uncertaintyVis : Dict String BernoulliDist -> Spec
 uncertaintyVis variants =
     BayesBandit.Bernoulli.pdfsVis variants
@@ -30,30 +38,45 @@ winnersVis variants =
         |> first
 
 
-init : List VariantData -> ( ( Spec, Spec ), Cmd msg )
-init flags =
-    let
-        variants =
-            flags
-                |> List.map (\f -> ( f.variant, bernoulli f.successes f.failures |> Maybe.withDefault Distribution.Bernoulli.zero ))
-                |> Dict.fromList
-
-        uncertainty =
-            uncertaintyVis variants
-
-        winners =
-            winnersVis variants
-    in
-    ( ( uncertainty, winners ), elmToJS (JSMsg uncertainty winners) )
+init : () -> ( Model, Cmd msg )
+init _ =
+    ( [], Cmd.none )
 
 
-main : Program (List VariantData) ( Spec, Spec ) msg
+main : Program () Model Msg
 main =
     Platform.worker
         { init = init
-        , update = \_ model -> ( model, Cmd.none )
-        , subscriptions = always Sub.none
+        , update = update
+        , subscriptions = subscriptions
         }
 
 
-port elmToJS : JSMsg -> Cmd msg
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg _ =
+    case msg of
+        ReceivedFromJS data ->
+            let
+                variants =
+                    data
+                        |> List.map (\f -> ( f.variant, bernoulli f.successes f.failures |> Maybe.withDefault Distribution.Bernoulli.zero ))
+                        |> Dict.fromList
+
+                uncertainty =
+                    uncertaintyVis variants
+
+                winners =
+                    winnersVis variants
+            in
+            ( data, sendVegaSpecs (JSMsg uncertainty winners) )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    receiveVariants ReceivedFromJS
+
+
+port receiveVariants : (List VariantData -> msg) -> Sub msg
+
+
+port sendVegaSpecs : JSMsg -> Cmd msg

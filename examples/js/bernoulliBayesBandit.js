@@ -80,87 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 
 
 
-var _List_Nil = { $: 0 };
-var _List_Nil_UNUSED = { $: '[]' };
-
-function _List_Cons(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons_UNUSED(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === $elm$core$Basics$EQ ? 0 : ord === $elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -790,6 +709,87 @@ function _Utils_ap(xs, ys)
 	}
 	return root;
 }
+
+
+
+var _List_Nil = { $: 0 };
+var _List_Nil_UNUSED = { $: '[]' };
+
+function _List_Cons(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons_UNUSED(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === $elm$core$Basics$EQ ? 0 : ord === $elm$core$Basics$LT ? -1 : 1;
+	}));
+});
 
 
 
@@ -1644,43 +1644,6 @@ var _Json_encodeNull = _Json_wrap(null);
 
 
 
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-
 // TASKS
 
 function _Scheduler_succeed(value)
@@ -2393,8 +2356,43 @@ function _Platform_mergeExportsDebug(moduleName, obj, exports)
 			: (obj[name] = exports[name]);
 	}
 }
-var $elm$core$Basics$EQ = 1;
-var $elm$core$Basics$LT = 0;
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var $elm$core$Array$foldr = F3(
@@ -2472,11 +2470,9 @@ var $elm$core$Set$toList = function (_v0) {
 	var dict = _v0;
 	return $elm$core$Dict$keys(dict);
 };
+var $elm$core$Basics$EQ = 1;
 var $elm$core$Basics$GT = 2;
-var $elm$core$Basics$always = F2(
-	function (a, _v0) {
-		return a;
-	});
+var $elm$core$Basics$LT = 0;
 var $elm$core$Result$Err = function (a) {
 	return {$: 1, a: a};
 };
@@ -2872,8 +2868,44 @@ var $elm$core$Result$isOk = function (result) {
 		return false;
 	}
 };
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$BernoulliBayesBandit$init = function (_v0) {
+	return _Utils_Tuple2(_List_Nil, $elm$core$Platform$Cmd$none);
+};
+var $elm$core$Basics$identity = function (x) {
+	return x;
+};
+var $author$project$BernoulliBayesBandit$ReceivedFromJS = $elm$core$Basics$identity;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$list = _Json_decodeList;
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $elm$json$Json$Decode$succeed = _Json_succeed;
+var $author$project$BernoulliBayesBandit$receiveVariants = _Platform_incomingPort(
+	'receiveVariants',
+	$elm$json$Json$Decode$list(
+		A2(
+			$elm$json$Json$Decode$andThen,
+			function (variant) {
+				return A2(
+					$elm$json$Json$Decode$andThen,
+					function (successes) {
+						return A2(
+							$elm$json$Json$Decode$andThen,
+							function (failures) {
+								return $elm$json$Json$Decode$succeed(
+									{E: failures, K: successes, L: variant});
+							},
+							A2($elm$json$Json$Decode$field, 'failures', $elm$json$Json$Decode$int));
+					},
+					A2($elm$json$Json$Decode$field, 'successes', $elm$json$Json$Decode$int));
+			},
+			A2($elm$json$Json$Decode$field, 'variant', $elm$json$Json$Decode$string))));
+var $author$project$BernoulliBayesBandit$subscriptions = function (_v0) {
+	return $author$project$BernoulliBayesBandit$receiveVariants($elm$core$Basics$identity);
+};
 var $author$project$BernoulliBayesBandit$JSMsg = F2(
 	function (uncertainty, winners) {
 		return {ai: uncertainty, am: winners};
@@ -2886,36 +2918,6 @@ var $author$project$Distribution$Bernoulli$bernoulli = F2(
 	function (numSuccesses, numFailures) {
 		return ((numSuccesses < 0) || (numFailures < 0)) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
 			A2($author$project$Distribution$Bernoulli$BernoulliDist, numSuccesses, numFailures));
-	});
-var $elm$core$Basics$identity = function (x) {
-	return x;
-};
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
-};
-var $author$project$BernoulliBayesBandit$elmToJS = _Platform_outgoingPort(
-	'elmToJS',
-	function ($) {
-		return $elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'uncertainty',
-					$elm$core$Basics$identity($.ai)),
-					_Utils_Tuple2(
-					'winners',
-					$elm$core$Basics$identity($.am))
-				]));
 	});
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -3108,6 +3110,33 @@ var $elm$core$List$map = F2(
 				}),
 			_List_Nil,
 			xs);
+	});
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var $author$project$BernoulliBayesBandit$sendVegaSpecs = _Platform_outgoingPort(
+	'sendVegaSpecs',
+	function ($) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'uncertainty',
+					$elm$core$Basics$identity($.ai)),
+					_Utils_Tuple2(
+					'winners',
+					$elm$core$Basics$identity($.am))
+				]));
 	});
 var $author$project$BayesBandit$Bernoulli$LabelledPoint = F3(
 	function (label, x, y) {
@@ -8496,60 +8525,30 @@ var $author$project$BernoulliBayesBandit$winnersVis = function (variants) {
 		$author$project$BayesBandit$Bernoulli$winnersVis(variants)).a;
 };
 var $author$project$Distribution$Bernoulli$zero = A2($author$project$Distribution$Bernoulli$BernoulliDist, 0, 0);
-var $author$project$BernoulliBayesBandit$init = function (flags) {
-	var variants = $elm$core$Dict$fromList(
-		A2(
-			$elm$core$List$map,
-			function (f) {
-				return _Utils_Tuple2(
-					f.L,
-					A2(
-						$elm$core$Maybe$withDefault,
-						$author$project$Distribution$Bernoulli$zero,
-						A2($author$project$Distribution$Bernoulli$bernoulli, f.K, f.E)));
-			},
-			flags));
-	var winners = $author$project$BernoulliBayesBandit$winnersVis(variants);
-	var uncertainty = $author$project$BernoulliBayesBandit$uncertaintyVis(variants);
-	return _Utils_Tuple2(
-		_Utils_Tuple2(uncertainty, winners),
-		$author$project$BernoulliBayesBandit$elmToJS(
-			A2($author$project$BernoulliBayesBandit$JSMsg, uncertainty, winners)));
-};
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$list = _Json_decodeList;
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $elm$json$Json$Decode$succeed = _Json_succeed;
+var $author$project$BernoulliBayesBandit$update = F2(
+	function (msg, model) {
+		var data = msg;
+		var variants = $elm$core$Dict$fromList(
+			A2(
+				$elm$core$List$map,
+				function (f) {
+					return _Utils_Tuple2(
+						f.L,
+						A2(
+							$elm$core$Maybe$withDefault,
+							$author$project$Distribution$Bernoulli$zero,
+							A2($author$project$Distribution$Bernoulli$bernoulli, f.K, f.E)));
+				},
+				data));
+		var winners = $author$project$BernoulliBayesBandit$winnersVis(variants);
+		var uncertainty = $author$project$BernoulliBayesBandit$uncertaintyVis(variants);
+		return _Utils_Tuple2(
+			data,
+			$author$project$BernoulliBayesBandit$sendVegaSpecs(
+				A2($author$project$BernoulliBayesBandit$JSMsg, uncertainty, winners)));
+	});
 var $elm$core$Platform$worker = _Platform_worker;
 var $author$project$BernoulliBayesBandit$main = $elm$core$Platform$worker(
-	{
-		az: $author$project$BernoulliBayesBandit$init,
-		aH: $elm$core$Basics$always($elm$core$Platform$Sub$none),
-		aJ: F2(
-			function (_v0, model) {
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			})
-	});
+	{az: $author$project$BernoulliBayesBandit$init, aH: $author$project$BernoulliBayesBandit$subscriptions, aJ: $author$project$BernoulliBayesBandit$update});
 _Platform_export({'BernoulliBayesBandit':{'init':$author$project$BernoulliBayesBandit$main(
-	$elm$json$Json$Decode$list(
-		A2(
-			$elm$json$Json$Decode$andThen,
-			function (variant) {
-				return A2(
-					$elm$json$Json$Decode$andThen,
-					function (successes) {
-						return A2(
-							$elm$json$Json$Decode$andThen,
-							function (failures) {
-								return $elm$json$Json$Decode$succeed(
-									{E: failures, K: successes, L: variant});
-							},
-							A2($elm$json$Json$Decode$field, 'failures', $elm$json$Json$Decode$int));
-					},
-					A2($elm$json$Json$Decode$field, 'successes', $elm$json$Json$Decode$int));
-			},
-			A2($elm$json$Json$Decode$field, 'variant', $elm$json$Json$Decode$string))))(0)}});}(this));
+	$elm$json$Json$Decode$succeed(0))(0)}});}(this));

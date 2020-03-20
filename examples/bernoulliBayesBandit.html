@@ -17,18 +17,18 @@
 <div id="uncertainty" style="width: 1024px; height: 800px"></div>
 
 <script>
-    Elm.BernoulliBayesBandit.init(
-        {
-            flags: [
-                {variant: "A", successes: 1, failures: 10},
-                {variant: "B", successes: 10, failures: 100},
-                {variant: "C", successes: 12, failures: 99},
-            ]
-        }
-    ).ports.elmToJS.subscribe(function (specs) {
+    var bandit = Elm.BernoulliBayesBandit.init()
+
+    bandit.ports.receiveVariants.send( [
+        {variant: "A", successes: 3, failures: 100},
+        {variant: "B", successes: 3, failures: 94},
+    ])
+
+    bandit.ports.sendVegaSpecs.subscribe(function (specs) {
         vegaEmbed("#winners", specs.winners, {actions: false}).catch(console.warn);
         vegaEmbed("#uncertainty", specs.uncertainty, {actions: false}).catch(console.warn);
     });
+
 </script>
 </body>
 </html>
