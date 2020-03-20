@@ -3,7 +3,7 @@
     "name": "chriskite/sate",
     "summary": "Statistical Analysis and Tests for Elm",
     "license": "BSD-3-Clause",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "exposed-modules": [
         "Distribution.Beta",
         "Distribution.Bernoulli",
