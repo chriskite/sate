@@ -7258,7 +7258,7 @@ var $gicentre$elm_vegalite$VegaLite$widthOfContainer = _Utils_Tuple2(
 	$elm$json$Json$Encode$string('container'));
 var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 	var xs = $ianmackenzie$elm_float_extra$Float$Extra$range(
-		{av: 1, aF: 0, aG: 100});
+		{av: 1, aF: 0, aG: 1000});
 	var posteriors = A2(
 		$elm$core$Dict$map,
 		F2(
@@ -8433,7 +8433,7 @@ var $author$project$BayesBandit$Bernoulli$thompsonSample = F2(
 				_Utils_Tuple2(initialTimesBest, numSamples)));
 	});
 var $author$project$BayesBandit$Bernoulli$winnerProbabilities = function (variants) {
-	var numSamples = 300000;
+	var numSamples = 200000;
 	return A2(
 		$folkertdev$elm_state$State$map,
 		$elm$core$Dict$map(
@@ -8526,7 +8526,7 @@ var $author$project$BernoulliBayesBandit$winnersVis = function (variants) {
 };
 var $author$project$Distribution$Bernoulli$zero = A2($author$project$Distribution$Bernoulli$BernoulliDist, 0, 0);
 var $author$project$BernoulliBayesBandit$update = F2(
-	function (msg, model) {
+	function (msg, _v0) {
 		var data = msg;
 		var variants = $elm$core$Dict$fromList(
 			A2(

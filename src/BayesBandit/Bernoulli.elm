@@ -25,7 +25,7 @@ winnerProbabilities : Dict String BernoulliDist -> State Seed (Dict String Float
 winnerProbabilities variants =
     let
         numSamples =
-            300000
+            200000
     in
     thompsonSample variants numSamples
         |> State.map (Dict.map (\_ timesBest -> toFloat timesBest / numSamples))
@@ -61,7 +61,7 @@ pdfsVis : Dict String BernoulliDist -> Spec
 pdfsVis variants =
     let
         xs =
-            Float.range { start = 0, end = 1, steps = 100 }
+            Float.range { start = 0, end = 1, steps = 1000 }
 
         posteriors : Dict String BetaDist
         posteriors =
