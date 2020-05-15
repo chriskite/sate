@@ -61,7 +61,7 @@ pdfsVis : Dict String BernoulliDist -> Spec
 pdfsVis variants =
     let
         xs =
-            Float.range { start = 0, end = 1, steps = 1000 }
+            Float.range { start = 0, end = 1, steps = 10000 }
 
         posteriors : Dict String BetaDist
         posteriors =
@@ -81,11 +81,12 @@ pdfsVis variants =
                 |> Dict.toList
                 |> List.concatMap second
 
+        dataValueLists : List (List ( String, DataValue ))
         dataValueLists =
             List.map (\lp -> [ ( "x", num lp.x ), ( "y", num lp.y ), ( "Variant", str lp.label ) ]) pdfPoints
 
         data =
-            List.foldl (\dvl acc -> acc << dataRow dvl) (dataFromRows []) dataValueLists
+            List.concatMap (\dvl -> dataRow dvl []) dataValueLists |> dataFromRows []
 
         enc =
             encoding
@@ -93,7 +94,7 @@ pdfsVis variants =
                 << position Y [ pName "y", pMType Quantitative ]
                 << color [ mName "Variant", mMType Nominal, mScale [ scScheme "set2" [] ] ]
     in
-    toVegaLite [ title "Beta PDFs" [], widthOfContainer, heightOfContainer, data [], enc [], line [ maInterpolate miMonotone ] ]
+    toVegaLite [ title "Beta PDFs" [], widthOfContainer, heightOfContainer, data, enc [], line [ maInterpolate miMonotone ] ]
 
 
 {-| Given a Dict of variant names and their Bernoulli distributions, choose a winning variant by sampling

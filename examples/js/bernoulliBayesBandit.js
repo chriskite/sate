@@ -7258,7 +7258,7 @@ var $gicentre$elm_vegalite$VegaLite$widthOfContainer = _Utils_Tuple2(
 	$elm$json$Json$Encode$string('container'));
 var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 	var xs = $ianmackenzie$elm_float_extra$Float$Extra$range(
-		{av: 1, aF: 0, aG: 1000});
+		{av: 1, aF: 0, aG: 10000});
 	var posteriors = A2(
 		$elm$core$Dict$map,
 		F2(
@@ -7337,24 +7337,22 @@ var $author$project$BayesBandit$Bernoulli$pdfsVis = function (variants) {
 				]);
 		},
 		pdfPoints);
-	var data = A3(
-		$elm$core$List$foldl,
-		F2(
-			function (dvl, acc) {
-				return A2(
-					$elm$core$Basics$composeL,
-					acc,
-					$gicentre$elm_vegalite$VegaLite$dataRow(dvl));
-			}),
-		$gicentre$elm_vegalite$VegaLite$dataFromRows(_List_Nil),
-		dataValueLists);
+	var data = A2(
+		$gicentre$elm_vegalite$VegaLite$dataFromRows,
+		_List_Nil,
+		A2(
+			$elm$core$List$concatMap,
+			function (dvl) {
+				return A2($gicentre$elm_vegalite$VegaLite$dataRow, dvl, _List_Nil);
+			},
+			dataValueLists));
 	return $gicentre$elm_vegalite$VegaLite$toVegaLite(
 		_List_fromArray(
 			[
 				A2($gicentre$elm_vegalite$VegaLite$title, 'Beta PDFs', _List_Nil),
 				$gicentre$elm_vegalite$VegaLite$widthOfContainer,
 				$gicentre$elm_vegalite$VegaLite$heightOfContainer,
-				data(_List_Nil),
+				data,
 				enc(_List_Nil),
 				$gicentre$elm_vegalite$VegaLite$line(
 				_List_fromArray(
